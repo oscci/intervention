@@ -74,8 +74,6 @@ myylab<-''
 if (i==1){myylab<-'Outcome'}
 mydat$mygp<-as.factor(mydat$mygp)
 levels(mydat$mygp)<-c('Control','Intervention')
-#bxplot(mynum~mygp , data = mydat,  xlab=truelabel[i],ylab=myylab,
-#       probs =0.5, col = 'black',lty=2,ylim=c(-3,3),cex.axis=1.5,cex.lab=2)
 
 beeswarm(mynum~mygp , data = mydat,xlab=truelabel[i],ylab=myylab,
          col='red',pch=16,ylim=c(-3,3),cex.axis=1.5,cex.lab=2)
