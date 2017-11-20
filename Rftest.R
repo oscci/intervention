@@ -6,7 +6,7 @@ library(beeswarm) #nice plotting package
 #if you haven't previously installed doBy and beeswarm, do that first
 #via Tools|Install packages. You only need do this once.
 options(scipen=999)#turn off scientific notation
-set.seed(42) #to ensure same values generated on each run
+set.seed(42) #to ensure same values generated on each run - change to any other number for different results
 
 #create a set of values to simulate for true group differences in SD units
 truediff<-c(.1,.75,1.25) #here we have 3 values; c stands for cocatenate so we get 3 values
@@ -14,11 +14,12 @@ truediff<-c(.1,.75,1.25) #here we have 3 values; c stands for cocatenate so we g
 truelabel<-c('A','B','C') #to label the plots for each run
 
 nsims<-length(truediff)
-bigsummary<-data.frame(matrix(NA,nrow=nsims,ncol=8))
-colnames(bigsummary)<-c('Simulation','N.per.gp','Gp1.mean','Gp1.sd','Gp2.mean','Gp2.sd','F','p')
+bigsummary<-data.frame(matrix(NA,nrow=nsims,ncol=10))
+colnames(bigsummary)<-c('Simulation','N.per.gp','Gp1.mean','Gp1.sd','Gp2.mean','Gp2.sd','SSB','SSW','F','p')
 #set up to save plots
-pdfname1<-'beeswarm_fratio.pdf'
-pdf(pdfname1,width=10,height=4)
+  # pdfname1<-'beeswarm_fratio.pdf'
+  # pdf(pdfname1,width=10,height=4)
+png('beeswarm_fratio.png',width=600,height=250)
 par(mfrow=c(1,nsims)) #one row and nsims columns for plot output
 
 myn<-20 #N per group
@@ -40,7 +41,7 @@ if(i==1){myfit1<-myfit}
 # We are going to compute F-ratio in steps below, but this gives sanity check
 # F-ratio should agree with the one in this summary
 
-#To understand how F-test works, best to compute F-ratio by hand
+#To understand how F-test works, compute F-ratio by formula
 #see https://www.stat.auckland.ac.nz/~wild/ChanceEnc/Ch10.byhand.pdf
 
 #First we'll get means, sds and variances for each group
@@ -62,8 +63,10 @@ bigsummary[i,3]<-mysum[1,2]
 bigsummary[i,4]<-mysum[1,3]
 bigsummary[i,5]<-mysum[2,2]
 bigsummary[i,6]<-mysum[2,3]
-bigsummary[i,7]<-myF
-bigsummary[i,8]<-pf(myF,1,(myn*2-2),lower.tail=F)
+bigsummary[i,7]<-ssB
+bigsummary[i,8]<-ssW
+bigsummary[i,9]<-myF
+bigsummary[i,10]<-pf(myF,1,(myn*2-2),lower.tail=F)
 
 #Show the plot with the stats
 myylab<-''
@@ -71,11 +74,11 @@ if (i==1){myylab<-'Outcome'}
 mydat$mygp<-as.factor(mydat$mygp)
 levels(mydat$mygp)<-c('Control','Intervention')
 bxplot(mynum~mygp , data = mydat,  xlab=truelabel[i],ylab=myylab,
-       probs =0.5, col = 'black',lty=2,ylim=c(-3,3))
+       probs =0.5, col = 'black',lty=2,ylim=c(-3,3),cex.axis=1.5,cex.lab=2)
 beeswarm(mynum~mygp , data = mydat,
          col='red',pch=16,add=TRUE)
 Fbit<-paste0('F = ',round(myF,2))
-text(1.3,2.5,Fbit)
+text(1.3,2.5,Fbit,cex=1.5)
 
 
 }
