@@ -1,6 +1,6 @@
 #Demonstration of how F-test reflects group effect
 #D.V.M. Bishop, started 20th Nov 2017
-#Thanks to Jan Verhove for suggesting modification to plots to show mean 
+#Thanks to Jan Vanhove for suggesting modification to plots to show mean 
 
 library(doBy) #package to make it easy to get tables of means etc
 library(beeswarm) #nice plotting package
