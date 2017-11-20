@@ -1,5 +1,6 @@
 #Demonstration of how F-test reflects group effect
 #D.V.M. Bishop, started 20th Nov 2017
+#Thanks to Jan Verhove for suggesting modification to plots to show mean 
 
 library(doBy) #package to make it easy to get tables of means etc
 library(beeswarm) #nice plotting package
@@ -73,10 +74,18 @@ myylab<-''
 if (i==1){myylab<-'Outcome'}
 mydat$mygp<-as.factor(mydat$mygp)
 levels(mydat$mygp)<-c('Control','Intervention')
-bxplot(mynum~mygp , data = mydat,  xlab=truelabel[i],ylab=myylab,
-       probs =0.5, col = 'black',lty=2,ylim=c(-3,3),cex.axis=1.5,cex.lab=2)
-beeswarm(mynum~mygp , data = mydat,
-         col='red',pch=16,add=TRUE)
+#bxplot(mynum~mygp , data = mydat,  xlab=truelabel[i],ylab=myylab,
+#       probs =0.5, col = 'black',lty=2,ylim=c(-3,3),cex.axis=1.5,cex.lab=2)
+
+beeswarm(mynum~mygp , data = mydat,xlab=truelabel[i],ylab=myylab,
+         col='red',pch=16,ylim=c(-3,3),cex.axis=1.5,cex.lab=2)
+segments(x0 = 0.7, x1 = 1.3,
+         y0 = bigsummary[i, 3], 
+         lty = 2, lwd = 2,col='black')
+segments(x0 = 1.7, x1 = 2.3,
+         y0 = bigsummary[i, 5], 
+         lty = 2, lwd = 2,col='black')
+
 Fbit<-paste0('F = ',round(myF,2))
 text(1.3,2.5,Fbit,cex=1.5)
 
