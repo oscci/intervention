@@ -1,6 +1,5 @@
-#Demonstration of how F-test reflects group effect
-#D.V.M. Bishop, started 20th Nov 2017
-#Thanks to Jan Vanhove for suggesting modification to plots to show mean 
+#Demonstration of how F and t are equivalent and relate to regression
+#D.V.M. Bishop, started 23rd Nov 2017
 
 library(doBy) #package to make it easy to get tables of means etc
 library(beeswarm) #nice plotting package
@@ -19,7 +18,7 @@ bigsummary<-data.frame(matrix(NA,nrow=nsims*2,ncol=13))
 colnames(bigsummary)<-c('Simulation','N.per.gp','Gp1.mean','Gp1.sd','Gp2.mean','Gp2.sd',
                         'SSB','SSW','F','p','b','b.se','t')
 
-myn<-24 #N per group
+myn<-24 #N per group - you can experiment with changes to this
 
 #set up data frame to hold simulated raw and z data for 3 expts
 alldat<-data.frame(matrix(NA,nrow=2*myn,ncol=7)) #col 1 for group, col 2-4 for raw, col 5-7 for z
@@ -30,14 +29,19 @@ alldat$Group<-c(rep(1,myn),rep(2,myn))#generate group IDs for equal sized groups
 alldat$A<-rnorm(myn*2) #generate a set of random numbers in first run through
 range1<-1:myn
 range2<-(myn+1):(2*myn)
+#we now create data for 3 expts by adding truediff to group 2
+#NB this script bases A, B and C on the same simulated data - they only vary in term of the addition of truediff
 for (i in 2:4){
 alldat[range1,i]<-alldat$A[range1]
 alldat[range2,i]<-alldat$A[range2]+truediff[i-1]
 }
-#scale so that variances differ rather than means
-#this is just done by dividing by (i-1) as a convenient way of achieving a difference
+#A, B, and C differ in terms of means
+#We want to scale the data so that means are similar but variances differ
+#This is just done by dividing by (i-1) - just for convenience; 
+#This halves the values for B and divides by 3 for C.
 for (i in 2:4){
 alldat[,i]<-alldat[,i]/(i-1)
+
 #scale to give arbitrary mean 40 and SD 10 for A
 alldat[,i]<-40+(alldat[,i]*10)
 alldat[,(i+3)]<-scale(alldat[,i])
@@ -45,16 +49,16 @@ alldat[,(i+3)]<-scale(alldat[,i])
 
 
 for (j in 1:2){#do plots first for raw data, then for z-scores
-  #set up to save plots
+  #set up to save plots as png files. These will be written to working directory
   pngname<-'beeswarm_fratio_raw.png'
   if (j==2){pngname<-'beeswarm_fratio_z.png'}
   png(pngname,width=600,height=250)
   par(mfrow=c(1,nsims)) #one row and nsims columns for plot output
   
-#alldat #uncomment this to look at the dataframe if you like
+View(alldat) #can comment this line out if you don't want to look at the dataframe 
 
 for (i in 1:3){
-  #select the column for this expt (i) and this j (raw/z)
+  #select the column for this expt (i) and this j (1 = raw; 2 = z)
   myindex<-(i+1)+(j-1)*3
   mynum<-alldat[,myindex]
 myfit <- aov(mynum ~ alldat$Group) #run Anova to test if groups differ
@@ -67,12 +71,8 @@ t.test(mynum~alldat$Group,var.equal=TRUE)
 bfit<-lm(formula = mynum ~ alldat$Group)
 
 #summary(myfit) #uncomment to see Anova table
-# We are going to compute F-ratio in steps below, but this gives sanity check
-# F-ratio should agree with the one in this summary
 
-#To understand how F-test works, compute F-ratio by formula
-#see https://www.stat.auckland.ac.nz/~wild/ChanceEnc/Ch10.byhand.pdf
-
+#Next section is taken from Rftest.r - computing F-ratio step by step
 #First we'll get means, sds and variances for each group
 #Note: we don't need sds, but they are more familiar when reporting data.
 #The variance is just the sd squared
@@ -111,12 +111,12 @@ if (j==2){my.ylim<-c(-3,3)
    texty<-2.7}
 beeswarm(mynum~alldat$Group ,xlab=truelabel[i],ylab=myylab,
          col='red',pch=16,ylim=my.ylim,cex.axis=1.5,cex.lab=2)
-segments(x0 = 0.7, x1 = 1.3,
-         y0 = bigsummary[index2, 3], 
+#This time we plot the slope rather than the means
+segments(x0 = 1, x1 = 2,
+         y0 = bigsummary[index2, 3], y1=bigsummary[index2, 5],
          lty = 1, lwd = 2,col='black')
-segments(x0 = 1.7, x1 = 2.3,
-         y0 = bigsummary[index2, 5], 
-         lty = 1, lwd = 2,col='black')
+
+
 
 Fbit<-paste0('F = ',round(myF,2))
 text(1.3,texty,Fbit,cex=1.5)
