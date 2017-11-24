@@ -35,6 +35,7 @@ alldat[range1,i]<-alldat$A[range1]
 alldat[range2,i]<-alldat$A[range2]+truediff[i-1]
 }
 #scale so that variances differ rather than means
+#this is just done by dividing by (i-1) as a convenient way of achieving a difference
 for (i in 2:4){
 alldat[,i]<-alldat[,i]/(i-1)
 #scale to give arbitrary mean 40 and SD 10 for A
@@ -123,3 +124,16 @@ text(1.3,texty,Fbit,cex=1.5)
 }
 dev.off() #stop printing to png
 }
+view(bigsummary)
+#Use last run to illustrate how you can compute F from beta
+beta<-bigsummary[6,11]
+sx<-sd(c(rep(1,myn),rep(2,myn))) #sd for the group term (just 1s and 2s)
+sy<-1 #NB because data are z-scores, the sd for Y is just 1
+#we can compute the correlation coefficient, r as follows:
+r <-beta*sx/sy #with beta we could omit sy as it is equal to 1
+#F computed from correlation coefficient
+thisF<-(r^2/((1-r^2)/(myn*2-2)))
+
+
+
+
