@@ -30,27 +30,24 @@ colnames(mydata)<-colnames<-c('group','valuea')
 mydata$group<-c(rep(0,10),c(rep(1,10)))
 mydata$valuea<-c(rep(3,10),c(rep(4,10)))
 badd<-c(-2,-1,-1,0,0,0,0,1,1,2)
-cadd<-c(-3,-2,-1,-1,0,0,1,2,3)
+cadd<-c(-3,-2,-1,-1,0,0,1,1,2,3)
 mydata$group<-as.factor(mydata$group)
 levels(mydata$group)<-c('Control','Trained')
 #set up to save plots
-pngname<-'beeswarm_2grp_intvardemo.png'
-png(pngname,width=500,height=250)
+pngname<-'beeswarm_2grp_intvardemo.png' #needs a lot of fiddly formatting to get decent resolution
+png(pngname,width=1100,height=400)
+#png(pngname,res=300)
 par(mfrow=c(1,3))
+par(mar=c(5,6,5,2))
 beeswarm(mydata$valuea~mydata$group ,xlab='',ylab='Vocabulary gain',
-         col='red',pch=16,cex.axis=1.4,cex.lab=1.2,ylim=c(0,8),main='A',spacing=.5)
+         col='red',pch=20,cex.axis=2.2,cex.lab=2.5,ylim=c(0,8),main='A',cex.main=3,spacing=.5,cex=2)
 
 mydata$valueb<-mydata$valuea+rep(badd,2)
-
 beeswarm(mydata$valueb~mydata$group ,xlab='',ylab='',
-         col='red',pch=16,cex.axis=1.4,cex.lab=1.2,ylim=c(0,8),main='B',spacing=.5)
+         col='red',pch=16,cex.axis=2.2,cex.lab=2.5,ylim=c(0,8),main='B',cex.main=3,spacing=.5,cex=2)
 mydata$valuec<-mydata$valuea+rep(cadd,2)
-
 beeswarm(mydata$valuec~mydata$group ,xlab='',ylab='',
-         col='red',pch=16,cex.axis=1.4,cex.lab=1.2,ylim=c(0,8),main='C',spacing=.5)
-
-
-
+         col='red',pch=16,cex.axis=2.2,cex.lab=2.5,ylim=c(0,8),main='C',cex.main=3,spacing=.5,cex=2)
 dev.off()
   
 #Now generate 9 plots either with no effect or effect as in valuec.
